@@ -247,7 +247,7 @@ function App() {
 
   async function cargarDatos() {
     setMensaje('Cargando...')
-    const cuadrosResp  = await supabase.from('cuadros').select('*').order('id_cuadro', { ascending: true })
+    const cuadrosResp  = await supabase.from('cuadros').select('*').order('id_Cuadro', { ascending: true })
     const artistasResp = await supabase.from('artistas').select('*').order('id_Artista', { ascending: true })
     const ventasResp   = await supabase.from('ventas').select('*').order('id_Venta', { ascending: false })
     if (cuadrosResp.error)  console.log(cuadrosResp.error)
@@ -273,14 +273,14 @@ function App() {
     const nuevoCosto = prompt('Nuevo costo:', cuadro.Costo)
     const nuevoStock = prompt('Nuevo stock:', cuadro.Stock ?? 1)
     if (nuevoCosto === null || nuevoStock === null) return
-    const { error } = await supabase.from('cuadros').update({ Costo: Number(nuevoCosto), Stock: Number(nuevoStock) }).eq('id_cuadro', cuadro.id_cuadro)
+    const { error } = await supabase.from('cuadros').update({ Costo: Number(nuevoCosto), Stock: Number(nuevoStock) }).eq('id_Cuadro', cuadro.id_Cuadro)
     if (error) { console.log(error); alert('No se pudo actualizar el cuadro'); return }
     alert('Cuadro actualizado'); cargarDatos()
   }
 
   async function eliminarCuadro(cuadro) {
     if (!confirm(`¿Seguro que quieres eliminar "${cuadro.Nombre}"?`)) return
-    const { error } = await supabase.from('cuadros').delete().eq('id_cuadro', cuadro.id_cuadro)
+    const { error } = await supabase.from('cuadros').delete().eq('id_Cuadro', cuadro.id_Cuadro)
     if (error) { console.log(error); alert('No se pudo eliminar el cuadro'); return }
     alert('Cuadro eliminado'); cargarDatos()
   }
@@ -290,9 +290,9 @@ function App() {
     if (stockActual <= 0) { alert('No hay stock disponible para este cuadro'); return }
     const metodoPago = prompt('Método de pago: efectivo, tarjeta o transferencia', 'efectivo')
     if (!metodoPago) return
-    const { error: errorVenta } = await supabase.from('ventas').insert([{ Total: Number(cuadro.Costo || 0), Hora: new Date().toISOString().slice(0, 10), Metodo_Pago: metodoPago, Nombre_Cuadro: cuadro.Nombre, id_cuadro: cuadro.id_cuadro }])
+    const { error: errorVenta } = await supabase.from('ventas').insert([{ Total: Number(cuadro.Costo || 0), Hora: new Date().toISOString().slice(0, 10), Metodo_Pago: metodoPago, Nombre_Cuadro: cuadro.Nombre, id_Cuadro: cuadro.id_Cuadro }])
     if (errorVenta) { console.log(errorVenta); alert('No se pudo registrar la venta'); return }
-    const { error: errorStock } = await supabase.from('cuadros').update({ Stock: stockActual - 1 }).eq('id_cuadro', cuadro.id_cuadro)
+    const { error: errorStock } = await supabase.from('cuadros').update({ Stock: stockActual - 1 }).eq('id_Cuadro', cuadro.id_Cuadro)
     if (errorStock) { console.log(errorStock); alert('La venta se registró, pero no se pudo actualizar el stock'); return }
     alert('Venta registrada correctamente'); cargarDatos(); setPantalla('ventas')
   }
@@ -401,7 +401,7 @@ function App() {
             <span className="section-tag">Colección disponible</span>
             <div className="grid">
               {cuadros.map(cuadro => (
-                <div className="card" key={cuadro.id_cuadro}>
+                <div className="card" key={cuadro.id_Cuadro}>
                   {cuadro.Foto && <img src={cuadro.Foto} alt={cuadro.Nombre} className="imagen-cuadro" loading="lazy" decoding="async" onLoad={e => e.currentTarget.classList.add('cargada')} />}
                   <div className="card-body">
                     <h3>{cuadro.Nombre}</h3>
@@ -459,8 +459,8 @@ function App() {
                 <thead><tr><th>ID</th><th>Nombre</th><th>Costo</th><th>Stock</th><th>Acciones</th></tr></thead>
                 <tbody>
                   {cuadros.map(cuadro => (
-                    <tr key={cuadro.id_cuadro}>
-                      <td>{cuadro.id_cuadro}</td><td>{cuadro.Nombre}</td>
+                    <tr key={cuadro.id_Cuadro}>
+                      <td>{cuadro.id_Cuadro}</td><td>{cuadro.Nombre}</td>
                       <td>${cuadro.Costo}</td><td>{cuadro.Stock ?? 1}</td>
                       <td>
                         <button onClick={() => actualizarCuadro(cuadro)}>Editar</button>
